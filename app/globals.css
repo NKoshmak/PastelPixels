@@ -8,7 +8,7 @@ body {
   margin: 0;
   padding: 0;
   height: auto;
-  overflow: hidden;
+  overflow: auto;
   font-family: var(--font-jakarta), sans-serif;
   -webkit-font-smoothing: antialiased;
   scroll-behavior: auto;

@@ -1,23 +1,66 @@
-"use client";
-import { ReactLenis } from "@studio-freight/react-lenis";
+'use client';
 
-function SmoothScrolling({ children }) {
-  const [isMobile, setIsMobile] = useState(false);
+import { useEffect, useRef } from "react";
+import Lenis from "@studio-freight/lenis";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
+
+export default function SmoothScrolling({ children }) {
+  const lenisRef = useRef(null);
 
   useEffect(() => {
-    setIsMobile(window.matchMedia("(pointer: coarse)").matches);
+    const isMobile = window.innerWidth <= 768;
+
+    if (isMobile) return; // 🚫 Skip Lenis on mobile
+
+    // ✅ Initialize Lenis
+    const lenis = new Lenis({
+      smooth: true,
+      duration: 1.2,
+      easing: (t) => 1 - Math.pow(1 - t, 3),
+    });
+
+    lenisRef.current = lenis;
+
+    // ✅ Sync Lenis with GSAP ScrollTrigger
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    gsap.ticker.lagSmoothing(0); // Removes GSAP delays
+    lenis.on("scroll", ScrollTrigger.update);
+    requestAnimationFrame(raf);
+
+    ScrollTrigger.scrollerProxy(document.body, {
+      scrollTop(value) {
+        if (arguments.length) {
+          lenis.scrollTo(value);
+        }
+        return window.scrollY;
+      },
+      getBoundingClientRect() {
+        return {
+          top: 0,
+          left: 0,
+          width: window.innerWidth,
+          height: window.innerHeight,
+        };
+      },
+      pinType: document.body.style.transform ? "transform" : "fixed",
+    });
+
+    ScrollTrigger.defaults({ scroller: document.body });
+    ScrollTrigger.refresh();
+
+    // ✅ Cleanup
+    return () => {
+      lenis.destroy();
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
   }, []);
 
-  if (isMobile) {
-    return <>{children}</>; // 👈 native scroll fallback
-  }
-
-  
-  return (
-    <ReactLenis root options={{ lerp: 0.1, duration: 1.5, smoothTouch: false,  orientation: "vertical", }}>
-      {children}
-    </ReactLenis>
-  );
+  return <>{children}</>;
 }
-
-export default SmoothScrolling;
