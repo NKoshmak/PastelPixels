@@ -1,10 +1,8 @@
-/** @format */
-
 import "./globals.css";
 import { Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import SmoothScrollProvider from "@/components/SmoothScrollProvider"; 
+import SmoothScrolling from "@/components/SmoothScrollProvider"; 
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -28,9 +26,11 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/images/favicon.ico" />
       </head>
       <body className={jakarta.className}>
+        <SmoothScrolling>
         <Navbar />
-        <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        {children}
         <Footer />
+        </SmoothScrolling>
       </body>
     </html>
   );

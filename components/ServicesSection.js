@@ -117,6 +117,8 @@ export default function ServicesSection() {
       },
     });
 
+    ScrollTrigger.refresh(); // ensure after mount
+
     return () => {
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };
