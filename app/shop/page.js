@@ -19,7 +19,7 @@ const templates = {
     },
     {
       title: "Wellness Coach Framer Template",
-      image: "/images/wellness_coach_framer.png",
+      image: "/images/wellness_framer.png",
       link: "https://sensitive-work-982584.framer.app",
       buy: "https://yourstore.com/buy/wellness-coach",
     },
